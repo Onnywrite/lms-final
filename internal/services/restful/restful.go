@@ -38,6 +38,7 @@ func New(logger *slog.Logger, calculator *calculator.Calculator, port int) *Serv
 	mux.HandleFunc("status/", handleStatus)
 	mux.HandleFunc("setting/", handleSetting)
 	// TODO: mux.HandleFunc("powers/", handlePowers)
+	logger.Debug("New restful.Server is ready to handle")
 
 	return &Server{
 		log:  logger,
@@ -54,6 +55,7 @@ func (s *Server) Start() error {
 
 	http.ListenAndServe(fmt.Sprintf(":%d", s.port), s.mux)
 
+	s.log.Info("restful.Server started listening and serving")
 	return nil
 }
 

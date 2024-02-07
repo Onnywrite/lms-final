@@ -23,11 +23,13 @@ func main() {
 	log := setupLogger(cfg.Env)
 	defer log.Debug("stopped")
 	application := app.New(log, cfg.DbConnect, cfg.GoroutinesCount, cfg.Port)
+	log.Debug("Starting the application")
 	go application.MustStart()
 
 	// graceful shutdown
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGTERM, syscall.SIGINT)
+	log.Debug("Waiting for shutdown")
 	<-shutdown
 	application.Stop()
 	log.Info("Gracefully stopped")
