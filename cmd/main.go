@@ -42,5 +42,7 @@ func setupLogger(env string) *slog.Logger {
 	case prodEnv:
 		return slog.New(
 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+	default:
+		panic("unexpected env value")
 	}
 }
