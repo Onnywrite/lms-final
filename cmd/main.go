@@ -1,5 +1,6 @@
 package main
 
+// TODO: add a lot of logging
 import (
 	"log/slog"
 	"os"
@@ -11,7 +12,7 @@ import (
 )
 
 const (
-	localEnv = "local"
+	localEnv = "loc"
 	devEnv   = "dev"
 	prodEnv  = "prod"
 )
@@ -20,6 +21,7 @@ func main() {
 	cfg := config.MustLoad()
 
 	log := setupLogger(cfg.Env)
+	defer log.Debug("stopped")
 	application := app.New(log, cfg.DbConnect, cfg.GoroutinesCount, cfg.Port)
 	go application.MustStart()
 
