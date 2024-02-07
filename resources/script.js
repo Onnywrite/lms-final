@@ -19,7 +19,7 @@ send.addEventListener("click", async () => {
     //     method: "POST",
     //     body: value,
     //     headers: {
-    //         "Content-Type": "application/text;charset=utf-8"
+    //         "Content-Type": "text/plain"
     //     }
     // });
     await setTimeout(async () => {}, 2000);
