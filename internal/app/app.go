@@ -2,9 +2,10 @@ package app
 
 import (
 	"fmt"
+	"log/slog"
+
 	"github.com/Onnywrite/lms-final/internal/services/calculator"
 	"github.com/Onnywrite/lms-final/internal/services/restful"
-	"log/slog"
 )
 
 type App struct {
@@ -20,8 +21,8 @@ func New(
 	port int) *App {
 	// TODO: database (storage)
 	//db := storage....
-	calc := calculator.New(goroutinesCount /*, db*/)
-	serv := restful.New(calc, port)
+	calc := calculator.New(logger, goroutinesCount /*, db*/)
+	serv := restful.New(logger, calc, port)
 
 	return &App{
 		log:      logger,
