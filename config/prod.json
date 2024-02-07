@@ -1,0 +1,6 @@
+{
+  "env": "prod",
+  "goroutines_count": 32,
+  "port": 18080,
+  "db_connection": null
+}

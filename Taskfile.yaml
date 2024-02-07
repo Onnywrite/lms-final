@@ -1,6 +1,8 @@
 version: '3'
 tasks:
   runlocal:
+    aliases:
+      - run
     desc: runs cmd/main.go with all flags
     cmd: go run cmd/main.go --CONFIG_PATH=./config/local.json
   runprod:
