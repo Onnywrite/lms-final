@@ -14,8 +14,8 @@ func New(calculator *calculator.Calculator, port int) *Server {
 	}
 }
 
-func (s *Server) Start() {
-
+func (s *Server) Start() error {
+	return nil
 }
 
 func (s *Server) Stop() {

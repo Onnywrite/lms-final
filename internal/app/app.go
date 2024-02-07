@@ -1,46 +1,53 @@
 package app
 
 import (
+	"fmt"
+	"github.com/Onnywrite/lms-final/internal/services/calculator"
+	"github.com/Onnywrite/lms-final/internal/services/restful"
 	"log/slog"
 )
 
 type App struct {
-	log     *slog.Logger
-	dbConn  string
-	goCount int
-	Port    int
+	log      *slog.Logger
+	server   *restful.Server
+	restPort int
 }
 
 func New(
 	logger *slog.Logger,
 	dbConnect string,
 	goroutinesCount int,
-	Port int) *App {
+	port int) *App {
+	// TODO: database (storage)
+	//db := storage....
+	calc := calculator.New(goroutinesCount /*, db*/)
+	serv := restful.New(calc, port)
+
 	return &App{
-		log:     logger,
-		dbConn:  dbConnect,
-		goCount: goroutinesCount,
-		Port:    Port,
+		log:      logger,
+		server:   serv,
+		restPort: port,
 	}
 }
 
 func (a *App) MustStart() {
-	err := a.Start()
-	if err != nil {
+	if err := a.Start(); err != nil {
 		panic(err)
 	}
 }
 
 func (a *App) Start() error {
-	const op = "app.MustStart"
+	const op = "app.Start"
 
-	//a.log.Info("App started", slog.Int("calcPort", a.Port), slog.Int("restPort", a.Port))
+	if err := a.server.Start(); err != nil {
+		fmt.Errorf("%s: %s", op, err.Error())
+		return err
+	}
+	a.log.Info("Server started")
 	return nil
 }
 
-func (a *App) Stop() error {
-	const op = "app.Start"
-
-	//a.log.Debug("App started", slog.Int("calcPort", a.Port), slog.Int("restPort", a.Port))
-	return nil
+func (a *App) Stop() {
+	a.server.Stop()
+	a.log.Info("Server stopped")
 }
