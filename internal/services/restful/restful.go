@@ -34,10 +34,10 @@ type Server struct {
 func New(logger *slog.Logger, calculator *calculator.Calculator, port int) *Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", handleIndex)
-	mux.HandleFunc("new/", handleNew)
-	mux.HandleFunc("status/", handleStatus)
-	mux.HandleFunc("setting/", handleSetting)
-	// TODO: mux.HandleFunc("powers/", handlePowers)
+	mux.HandleFunc("/new/", handleNew)
+	mux.HandleFunc("/status/", handleStatus)
+	mux.HandleFunc("/setting/", handleSetting)
+	// TODO: mux.HandleFunc("/powers/", handlePowers)
 	logger.Debug("New restful.Server is ready to handle")
 
 	return &Server{
