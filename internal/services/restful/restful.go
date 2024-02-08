@@ -2,6 +2,7 @@ package restful
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log/slog"
 	"net/http"
 
@@ -27,16 +28,24 @@ import (
 type Server struct {
 	log  *slog.Logger
 	calc *calculator.Calculator
-	mux  *http.ServeMux
+	mux  *gin.Engine
 	port int
 }
 
 func New(logger *slog.Logger, calculator *calculator.Calculator, port int) *Server {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", handleIndex)
-	mux.HandleFunc("/new/", handleNew)
-	mux.HandleFunc("/status/", handleStatus)
-	mux.HandleFunc("/setting/", handleSetting)
+	mux := gin.Default()
+
+	mux.Static("/static", "./resources")
+
+	mux.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.html", nil)
+	})
+
+	mux.POST("/new/", getNew)
+	mux.GET("/status/", getStatus)
+	mux.GET("/setting/", getSetting)
+	mux.POST("/setting/", postSetting)
+	mux.PUT("/setting/", putSetting)
 	// TODO: mux.HandleFunc("/powers/", handlePowers)
 	logger.Debug("New restful.Server is ready to handle")
 
@@ -49,11 +58,17 @@ func New(logger *slog.Logger, calculator *calculator.Calculator, port int) *Serv
 }
 
 func (s *Server) Start() error {
+	const op = "restful.Start"
+
 	if err := s.calc.Start(); err != nil {
 		return err
 	}
 
-	http.ListenAndServe(fmt.Sprintf(":%d", s.port), s.mux)
+	go func() {
+		if err := s.mux.Run(fmt.Sprintf(":%d", s.port)); err != nil {
+			fmt.Errorf("%s: %s", op, err.Error())
+		}
+	}()
 
 	s.log.Info("restful.Server started listening and serving")
 	return nil
@@ -63,22 +78,28 @@ func (s *Server) Stop() {
 	s.calc.Stop()
 }
 
-func handleIndex(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(`{"id":"hello from Index"}`))
-	w.WriteHeader(http.StatusOK)
+func getNew(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"id": 1567,
+	})
 }
 
-func handleNew(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(`{"id":"hello from New"}`))
-	w.WriteHeader(http.StatusOK)
+func getStatus(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{
+		"id":     1567,
+		"status": "calculating",
+		"done":   "97.8%",
+	})
 }
 
-func handleStatus(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(`{"id":"hello from Status", "expression":"status2+2"}`))
-	w.WriteHeader(http.StatusOK)
+func getSetting(c *gin.Context) {
+
 }
 
-func handleSetting(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte(`{"id":"hello from Setting"}`))
-	w.WriteHeader(http.StatusOK)
+func postSetting(c *gin.Context) {
+
+}
+
+func putSetting(c *gin.Context) {
+
 }
