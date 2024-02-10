@@ -22,7 +22,7 @@ func main() {
 
 	log := setupLogger(cfg.Env)
 	defer log.Debug("stopped")
-	application := app.New(log, cfg.DbConnect, cfg.GoroutinesCount, cfg.Port)
+	application := app.New(log, cfg.DbConnect, cfg.GoroutinesCount, cfg.Port, cfg.StaticDir)
 	log.Debug("Starting the application")
 	go application.MustStart()
 

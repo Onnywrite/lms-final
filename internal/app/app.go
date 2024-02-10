@@ -18,11 +18,12 @@ func New(
 	logger *slog.Logger,
 	dbConnect string,
 	goroutinesCount int,
-	port int) *App {
+	port int,
+	staticPath string) *App {
 	// TODO: database (storage)
 	//db := storage....
 	calc := calculator.New(logger, goroutinesCount /*, db*/)
-	serv := restful.New(logger, calc, port)
+	serv := restful.New(logger, calc, port, staticPath)
 
 	return &App{
 		log:      logger,

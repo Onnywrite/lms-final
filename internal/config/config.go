@@ -15,6 +15,7 @@ type Config struct {
 	GoroutinesCount int    `json:"goroutines_count"`
 	Port            int    `json:"port"`
 	DbConnect       string `json:"db_connection"`
+	StaticDir       string `json:"static_dir"`
 }
 
 func MustLoad() *Config {

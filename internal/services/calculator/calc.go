@@ -1,6 +1,10 @@
 package calculator
 
-import "log/slog"
+import (
+	"log/slog"
+
+	"github.com/Onnywrite/lms-final/internal/domain/models"
+)
 
 type Calculator struct {
 	log     *slog.Logger
@@ -23,4 +27,9 @@ func (c *Calculator) Start() error {
 
 func (c *Calculator) Stop() {
 	c.log.Info("calculator.Calculator is stopped")
+}
+
+func (c *Calculator) ProcessExpression(expr *models.Expression) (
+	processed models.ProcessedExpression, err error) {
+	return models.ProcessedExpression{}, nil
 }

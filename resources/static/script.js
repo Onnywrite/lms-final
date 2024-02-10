@@ -3,12 +3,12 @@ const send = document.querySelector(".send");
 const update = document.querySelector(".update");
 const list = document.querySelector(".list");
 
-const indexEP = "0.0.0.0:8080/";
-const newEP = "0.0.0.0:8080/new";
-const statusEP = "0.0.0.0:8080/status";
+const indexEP =  "http://localhost:8080/";
+const newEP =    "http://localhost:8080/new";
+const statusEP = "http://localhost:8080/status";
 
 send.addEventListener("click", async () => {
-    const expr = {expression: input.value };
+    const expr = {expression: input.value, lol: "kek" };
     let resp = await fetch(newEP, {
         method: "POST",
         body: JSON.stringify(expr),
@@ -17,8 +17,9 @@ send.addEventListener("click", async () => {
         }
     });
     if (resp.ok) {
-        let id = await resp.json().id;
-        alert(`New expression added with id ${id}`);
+        resp = await resp.text();
+        resp = JSON.parse(resp).id;
+        alert(`New expression added with id ${resp}`);
         list.innerHTML += getItemHTML(id, expr);
         input.value = "";
     } else {

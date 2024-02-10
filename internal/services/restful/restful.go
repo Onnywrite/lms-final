@@ -2,11 +2,14 @@ package restful
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
+	"github.com/Onnywrite/lms-final/internal/domain/models"
+	"github.com/gin-gonic/gin/binding"
 	"log/slog"
 	"net/http"
+	"os"
 
 	"github.com/Onnywrite/lms-final/internal/services/calculator"
+	"github.com/gin-gonic/gin"
 )
 
 // Server has these endpoints:
@@ -32,21 +35,30 @@ type Server struct {
 	port int
 }
 
-func New(logger *slog.Logger, calculator *calculator.Calculator, port int) *Server {
+func New(logger *slog.Logger, calculator *calculator.Calculator, port int, staticPath string) *Server {
 	mux := gin.Default()
+	binding.EnableDecoderDisallowUnknownFields = true
 
-	mux.Static("/static", "./resources")
-
+	mux.Static("/static", staticPath)
+	mux.Use(func(c *gin.Context) {
+		c.Set("calc", calculator)
+	})
+	mux.LoadHTMLFiles("./resources/index.html")
 	mux.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
-
-	mux.POST("/new/", getNew)
+	mux.POST("/new/", postNew)
 	mux.GET("/status/", getStatus)
 	mux.GET("/setting/", getSetting)
 	mux.POST("/setting/", postSetting)
 	mux.PUT("/setting/", putSetting)
 	// TODO: mux.HandleFunc("/powers/", handlePowers)
+	// DEBUG-ONLY
+	mux.GET("/ban/", func(c *gin.Context) {
+		c.Status(http.StatusOK)
+		os.Exit(0)
+	})
+	//
 	logger.Debug("New restful.Server is ready to handle")
 
 	return &Server{
@@ -78,10 +90,25 @@ func (s *Server) Stop() {
 	s.calc.Stop()
 }
 
-func getNew(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"id": 1567,
-	})
+func postNew(c *gin.Context) {
+	body := models.Expression{}
+	if err := c.BindJSON(&body); err != nil {
+		_ = c.AbortWithError(http.StatusBadRequest, err)
+		return
+	}
+
+	if calcAny, exists := c.Get("calc"); exists {
+		expr, err := calcAny.(*calculator.Calculator).ProcessExpression(&body)
+		if err != nil {
+			_ = c.AbortWithError(http.StatusBadRequest, err)
+			return
+		}
+
+		c.JSON(http.StatusAccepted, &expr)
+	} else {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
 }
 
 func getStatus(c *gin.Context) {
