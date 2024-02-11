@@ -8,7 +8,7 @@ const newEP =    "http://localhost:8080/new";
 const statusEP = "http://localhost:8080/status";
 
 send.addEventListener("click", async () => {
-    const expr = {expression: input.value, lol: "kek" };
+    const expr = {expression: "dada"};
     let resp = await fetch(newEP, {
         method: "POST",
         body: JSON.stringify(expr),
@@ -32,7 +32,7 @@ update.addEventListener("click", async () => {
         method: "GET",
     });
     // all temporary
-    let obj = resp.json()
+    let obj = resp.json();
     htmlList.innerHTML += getItemHTML(obj.id, obj.expression);
 });
 

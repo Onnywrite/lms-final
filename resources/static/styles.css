@@ -8,8 +8,10 @@
     font-size: medium;
 }
 
-.expression-input {
-    font-size: medium;
+.expression-settings {
+    width: 400px;
+    border-radius: 8px;
+    padding: 16px 32px;
 }
 
 .operations-tip {
@@ -18,4 +20,10 @@
 
 .operation {
     font-size: medium;
+    width: 10%;
+}
+
+.operation-div {
+    display: flex;
+    gap: 120px;
 }
