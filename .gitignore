@@ -3,3 +3,4 @@ config/local.json
 storage
 Makefile
 internal/services/restful/front.go
+**/ignore-*
