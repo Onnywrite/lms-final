@@ -9,9 +9,9 @@
 }
 
 .expression-settings {
-    width: 400px;
-    border-radius: 8px;
-    padding: 16px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .operations-tip {
@@ -26,4 +26,9 @@
 .operation-div {
     display: flex;
     gap: 120px;
+}
+.expression-input {
+    width: 400px;
+    border-radius: 8px;
+    padding: 16px 32px;
 }
