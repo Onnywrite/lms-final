@@ -1,0 +1,21 @@
+.text {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.send-button {
+    width: 20%;
+    height: 100%;
+    font-size: medium;
+}
+
+.expression-input {
+    font-size: medium;
+}
+
+.operations-tip {
+    font-size: larger;
+}
+
+.operation {
+    font-size: medium;
+}
