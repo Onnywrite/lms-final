@@ -8,7 +8,13 @@ const newEP =    "http://localhost:8080/new";
 const statusEP = "http://localhost:8080/status";
 
 send.addEventListener("click", async () => {
-    const expr = {expression: "dada"};
+    const expr = {
+        expression:          input[0].value,
+        addition_time:       Number(input[1].value),
+        subtraction_time:    Number(input[2].value),
+        multiplication_time: Number(input[3].value),
+        division_time:       Number(input[4].value),
+    };
     let resp = await fetch(newEP, {
         method: "POST",
         body: JSON.stringify(expr),

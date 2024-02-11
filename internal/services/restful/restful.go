@@ -88,22 +88,27 @@ func (s *Server) Stop() {
 func postNew(c *gin.Context) {
 	body := models.Expression{}
 	if err := c.BindJSON(&body); err != nil {
-		_ = c.AbortWithError(http.StatusBadRequest, err)
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error":   err.Error(),
+			"message": "could not parse JSON body request",
+		})
 		return
 	}
 
 	if calcAny, exists := c.Get("calc"); exists {
 		expr, err := calcAny.(*calculator.Calculator).ProcessExpression(&body)
 		if err != nil {
-			_ = c.AbortWithError(http.StatusBadRequest, err)
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error":   err.Error(),
+				"message": "could not process your expression",
+			})
 			return
 		}
 
 		c.JSON(http.StatusAccepted, &expr)
-	} else {
-		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
+	c.AbortWithStatus(http.StatusInternalServerError)
 }
 
 func getStatus(c *gin.Context) {
