@@ -1,6 +1,6 @@
-const input = document.querySelector(".input");
-const send = document.querySelector(".send");
-const update = document.querySelector(".update");
+const input = document.querySelectorAll(".expression-input");
+const send = document.querySelector(".send-button");
+const update = document.querySelector(".update-button");
 const list = document.querySelector(".list");
 
 const indexEP =  "http://localhost:8080/";

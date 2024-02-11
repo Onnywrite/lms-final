@@ -4,20 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ДЖАВАСКРИПТ</title>
-
-    <script src="static/script.js" defer></script>
+    <link rel="stylesheet" href="static/styles.css">
+    <script defer src="static/script.js"></script>
 </head>
 <body>
     <div>
-        <input type="text" class="input" placeholder="Enter an expression">
-        <button class="send">Send</button>
+        <input type="text" class="expression-input text" placeholder="Enter an expression">
+        <button class="send-button">Send</button>
     </div>
-
+    <div>
+        <h3 class="operations-tip text">Operations timings</h3>
+    </div>
+    <div>
+        <p class="operation text">Addition</p>
+        <input type="number text" class="expression-input">
+    </div>
+    <div>
+        <p class="operation text">Subtraction</p>
+        <input type="number" class="expression-input">
+    </div>
+    <div>
+        <p class="operation text">Multiplication</p>
+        <input type="number" class="expression-input">
+    </div>
+    <div>
+        <p class="operation text">Division</p>
+        <input type="number" class="expression-input">
+    </div>
     <div>
         <ul class="list">
             
         </ul>
-        <button class="update">Update</button>
+        <button class="update-button">Update</button>
     </div>
 </body>
 </html>

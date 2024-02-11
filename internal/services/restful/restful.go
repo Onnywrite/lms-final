@@ -24,9 +24,6 @@ import (
 //
 // GET status/(id) with status of expression with the id;
 //
-// GET/PUT/POST setting/(id) gets or edits calculation settings of the
-// expression with given id;
-//
 // ....
 type Server struct {
 	log  *slog.Logger
@@ -44,14 +41,12 @@ func New(logger *slog.Logger, calculator *calculator.Calculator, port int, stati
 		c.Set("calc", calculator)
 	})
 	mux.LoadHTMLFiles("./resources/index.html")
+
 	mux.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
 	mux.POST("/new/", postNew)
 	mux.GET("/status/", getStatus)
-	mux.GET("/setting/", getSetting)
-	mux.POST("/setting/", postSetting)
-	mux.PUT("/setting/", putSetting)
 	// TODO: mux.HandleFunc("/powers/", handlePowers)
 	// DEBUG-ONLY
 	mux.GET("/ban/", func(c *gin.Context) {
@@ -117,16 +112,4 @@ func getStatus(c *gin.Context) {
 		"status": "calculating",
 		"done":   "97.8%",
 	})
-}
-
-func getSetting(c *gin.Context) {
-
-}
-
-func postSetting(c *gin.Context) {
-
-}
-
-func putSetting(c *gin.Context) {
-
 }
