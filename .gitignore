@@ -1,6 +1,5 @@
 .idea
-config/local.json
+configs/*-local.*
 storage
 Makefile
-internal/services/restful/front.go
 **/ignore-*

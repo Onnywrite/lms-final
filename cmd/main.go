@@ -1,6 +1,5 @@
 package main
 
-// TODO: add a lot of logging
 import (
 	"log/slog"
 	"os"
@@ -18,11 +17,11 @@ const (
 )
 
 func main() {
-	cfg := config.MustLoad()
+	cfg := config.MustLoadMain()
 
 	log := setupLogger(cfg.Env)
 	defer log.Debug("stopped")
-	application := app.New(log, cfg.DbConnect, cfg.GoroutinesCount, cfg.Port, cfg.StaticDir)
+	application := app.NewMain(log, cfg.Port, cfg.StaticDir)
 	log.Debug("Starting the application")
 	go application.MustStart()
 

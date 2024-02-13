@@ -7,26 +7,24 @@ import (
 )
 
 const (
-	configPathName = "CONFIG_PATH"
+	configPathName = "MAIN_CONFIG_PATH"
 )
 
-type Config struct {
-	Env             string `json:"env"`
-	GoroutinesCount int    `json:"goroutines_count"`
-	Port            int    `json:"port"`
-	DbConnect       string `json:"db_connection"`
-	StaticDir       string `json:"static_dir"`
+type MainConfig struct {
+	Env       string `json:"env"`
+	Port      int    `json:"port"`
+	StaticDir string `json:"static_dir"`
 }
 
-func MustLoad() *Config {
-	cfg, err := Load()
+func MustLoadMain() *MainConfig {
+	cfg, err := LoadMain()
 	if err != nil {
 		panic(err)
 	}
 	return cfg
 }
 
-func Load() (*Config, error) {
+func LoadMain() (*MainConfig, error) {
 	var path string
 
 	flag.StringVar(&path, configPathName, "", "path to config file")
@@ -42,7 +40,7 @@ func Load() (*Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	var cfg Config
+	var cfg MainConfig
 	err = json.Unmarshal(data, &cfg)
 	if err != nil {
 		return nil, err

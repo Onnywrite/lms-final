@@ -27,19 +27,15 @@ import (
 // ....
 type Server struct {
 	log  *slog.Logger
-	calc *calculator.Calculator
 	mux  *gin.Engine
 	port int
 }
 
-func New(logger *slog.Logger, calculator *calculator.Calculator, port int, staticPath string) *Server {
+func New(logger *slog.Logger, port int, staticPath string) *Server {
 	mux := gin.Default()
 	binding.EnableDecoderDisallowUnknownFields = true
 
 	mux.Static("/static", staticPath)
-	mux.Use(func(c *gin.Context) {
-		c.Set("calc", calculator)
-	})
 	mux.LoadHTMLFiles("./resources/index.html")
 
 	mux.GET("/", func(c *gin.Context) {
@@ -58,7 +54,6 @@ func New(logger *slog.Logger, calculator *calculator.Calculator, port int, stati
 
 	return &Server{
 		log:  logger,
-		calc: calculator,
 		port: port,
 		mux:  mux,
 	}
@@ -66,10 +61,6 @@ func New(logger *slog.Logger, calculator *calculator.Calculator, port int, stati
 
 func (s *Server) Start() error {
 	const op = "restful.Start"
-
-	if err := s.calc.Start(); err != nil {
-		return err
-	}
 
 	go func() {
 		if err := s.mux.Run(fmt.Sprintf(":%d", s.port)); err != nil {
@@ -82,7 +73,7 @@ func (s *Server) Start() error {
 }
 
 func (s *Server) Stop() {
-	s.calc.Stop()
+
 }
 
 func postNew(c *gin.Context) {
@@ -95,6 +86,7 @@ func postNew(c *gin.Context) {
 		return
 	}
 
+	// be careful. Calc does not exist anymore
 	if calcAny, exists := c.Get("calc"); exists {
 		expr, err := calcAny.(*calculator.Calculator).ProcessExpression(&body)
 		if err != nil {
