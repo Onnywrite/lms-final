@@ -2,12 +2,85 @@ version: '3'
 tasks:
   runlocal:
     aliases:
-      - run
-    desc: runs cmd/main.go with all flags
-    cmd: go run cmd/main.go --CONFIG_PATH=./configs/local.json
+      - runloc
+      - loc
+    desc: runs restful service, orchestrator and 2 daemons with local config
+    cmds:
+      - task ml
+      - task ol
+      - task dl
+      - task dl
+
   runprod:
-    desc: runs cmd/main.go with all flags for prod
-    cmd: go run cmd/main.go --CONFIG_PATH=./configs/prod.json
+    aliases:
+      - run
+    desc: runs restful service, orchestrator and 2 daemons with prod config
+    cmds:
+      - task mp
+      - task op
+      - task dp
+      - task dp
+
   runenv:
+    aliases:
+      - rune
+    desc: runs restful service, orchestrator and 2 daemons with config in env variables
+    cmds:
+      - task me
+      - task oe
+      - task de
+      - task de
+
+  mainlocal:
+    aliases:
+      - mainloc
+      - ml
+    desc: runs cmd/main.go with all flags
+    cmd: go run cmd/main.go --MAIN_CONFIG_PATH=./configs/main-local.json
+  mainprod:
+    aliases:
+      - mp
+    desc: runs cmd/main.go with all flags for prod
+    cmd: go run cmd/main.go --MAIN_CONFIG_PATH=./configs/main-prod.json
+  mainenv:
+    aliases:
+      - me
     desc: runs cmd/main.go with config file in env
     cmd: go run cmd/main.go
+
+  orchlocal:
+    aliases:
+      - orchloc
+      - ol
+    desc: runs cmd/orchestrator/orchestrator.go with all flags
+    cmd: go run cmd/orchestrator/orchestrator.go --ORCH_CONFIG_PATH=./configs/orchestrator-local.json
+  orchprod:
+    aliases:
+      - op
+    desc: runs cmd/orchestrator/orchestrator.go with all flags for prod
+    cmd: go run cmd/orchestrator/orchestrator.go --ORCH_CONFIG_PATH=./configs/orchestrator-prod.json
+  orchenv:
+    aliases:
+      - oe
+    desc: runs cmd/orchestrator/orchestrator.go with config file in env
+    cmd: go run cmd/orchestrator/orchestrator.go
+
+  daemonlocal:
+    aliases:
+      - daelocal
+      - daeloc
+      - dl
+    desc: runs cmd/daemon/daemon.go with all flags
+    cmd: go run cmd/daemon/daemon.go --DAEMON_CONFIG_PATH=./configs/orchestrator-local.json
+  daemonprod:
+    aliases:
+      - daeprod
+      - dp
+    desc: runs cmd/daemon/daemon.go with all flags for prod
+    cmd: go run cmd/daemon/daemon.go --DAEMON_CONFIG_PATH=./configs/orchestrator-prod.json
+  daemonenv:
+    aliases:
+      - daeenv
+      - de
+    desc: runs cmd/daemon/daemon.go with config file in env
+    cmd: go run cmd/daemon/daemon.go
