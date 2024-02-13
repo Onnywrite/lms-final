@@ -3,13 +3,11 @@ package restful
 import (
 	"context"
 	"fmt"
-	"github.com/Onnywrite/lms-final/internal/domain/models"
-	"github.com/gin-gonic/gin/binding"
 	"log/slog"
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 // Server has these endpoints:
@@ -40,15 +38,9 @@ func New(logger *slog.Logger, port int, staticPath string) *Server {
 	mux.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
-	mux.POST("/new/", postNew)
-	mux.GET("/status/", getStatus)
-	// TODO: mux.HandleFunc("/powers/", handlePowers)
-	// DEBUG-ONLY
-	mux.GET("/ban/", func(c *gin.Context) {
-		c.Status(http.StatusOK)
-		os.Exit(0)
-	})
-	//
+	mux.GET("/status", getStatus)
+	mux.GET("/servers", getServers)
+	mux.POST("/new", postNew)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
@@ -84,25 +76,4 @@ func (s *Server) Stop(ctx context.Context) {
 	}
 
 	s.log.Info("restful.Server stopped its work")
-}
-
-func postNew(c *gin.Context) {
-	body := models.Expression{}
-	if err := c.BindJSON(&body); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error":   err.Error(),
-			"message": "could not parse JSON body request",
-		})
-		return
-	}
-
-	c.AbortWithStatus(http.StatusInternalServerError)
-}
-
-func getStatus(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"id":     1567,
-		"status": "calculating",
-		"done":   "97.8%",
-	})
 }
