@@ -6,12 +6,6 @@ import (
 	"github.com/Onnywrite/lms-final/internal/domain"
 )
 
-const (
-	localEnv = "loc"
-	devEnv   = "dev"
-	prodEnv  = "prod"
-)
-
 func main() {
 	cfg := config.MustLoadOrchestrator()
 
