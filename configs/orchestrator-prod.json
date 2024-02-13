@@ -1,0 +1,6 @@
+{
+  "env": "prod",
+  "port": 8081,
+  "db_connection": "",
+  "shutdown_timeout": 5
+}

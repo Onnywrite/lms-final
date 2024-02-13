@@ -22,5 +22,10 @@ func MustLoadOrchestrator() *OrchestratorConfig {
 }
 
 func LoadOrchestrator() (*OrchestratorConfig, error) {
-	return load[OrchestratorConfig](orchestratorConfigPathName)
+	cfg, err := load[OrchestratorConfig](orchestratorConfigPathName)
+	if err != nil {
+		return nil, err
+	}
+	cfg.ShutdownTimeout *= time.Second
+	return cfg, nil
 }

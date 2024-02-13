@@ -1,0 +1,5 @@
+{
+  "env": "prod",
+  "orchestrator_uri": "localhost:8081",
+  "goroutines_count": 24
+}

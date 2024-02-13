@@ -23,5 +23,10 @@ func MustLoadMain() *MainConfig {
 }
 
 func LoadMain() (*MainConfig, error) {
-	return load[MainConfig](mainConfigPathName)
+	cfg, err := load[MainConfig](mainConfigPathName)
+	if err != nil {
+		return nil, err
+	}
+	cfg.ShutdownTimeout *= time.Second
+	return cfg, nil
 }
