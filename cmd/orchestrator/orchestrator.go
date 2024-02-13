@@ -20,8 +20,13 @@ const (
 func main() {
 	cfg := config.MustLoadOrchestrator()
 
-	log := setupLogger(cfg.Env)
+	logFile, err := os.Open(cfg.LogsDir)
+	if err != nil {
+		panic(err)
+	}
 
+	log := setupLogger(cfg.Env, logFile)
+	
 	application := app.NewOrchestrator(log, cfg.Port, cfg.DbConnection)
 	log.Debug("Starting the orchestrator")
 	go application.MustStart()
@@ -44,17 +49,17 @@ func main() {
 	log.Info("Gracefully stopped")
 }
 
-func setupLogger(env string) *slog.Logger {
+func setupLogger(env string, out *os.File) *slog.Logger {
 	switch env {
 	case localEnv:
 		return slog.New(
-			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+			slog.NewTextHandler(out, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	case devEnv:
 		return slog.New(
-			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}))
+			slog.NewJSONHandler(out, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	case prodEnv:
 		return slog.New(
-			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}))
+			slog.NewJSONHandler(out, &slog.HandlerOptions{Level: slog.LevelInfo}))
 	default:
 		panic("unexpected env value")
 	}
