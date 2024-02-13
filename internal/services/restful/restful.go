@@ -1,6 +1,7 @@
 package restful
 
 import (
+	"context"
 	"fmt"
 	"github.com/Onnywrite/lms-final/internal/domain/models"
 	"github.com/gin-gonic/gin/binding"
@@ -8,7 +9,6 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/Onnywrite/lms-final/internal/services/calculator"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,9 +26,8 @@ import (
 //
 // ....
 type Server struct {
-	log  *slog.Logger
-	mux  *gin.Engine
-	port int
+	log *slog.Logger
+	srv *http.Server
 }
 
 func New(logger *slog.Logger, port int, staticPath string) *Server {
@@ -50,12 +49,17 @@ func New(logger *slog.Logger, port int, staticPath string) *Server {
 		os.Exit(0)
 	})
 	//
+
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%d", port),
+		Handler: mux,
+	}
+
 	logger.Debug("New restful.Server is ready to handle")
 
 	return &Server{
-		log:  logger,
-		port: port,
-		mux:  mux,
+		log: logger,
+		srv: srv,
 	}
 }
 
@@ -63,7 +67,7 @@ func (s *Server) Start() error {
 	const op = "restful.Start"
 
 	go func() {
-		if err := s.mux.Run(fmt.Sprintf(":%d", s.port)); err != nil {
+		if err := s.srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			fmt.Errorf("%s: %s", op, err.Error())
 		}
 	}()
@@ -72,8 +76,14 @@ func (s *Server) Start() error {
 	return nil
 }
 
-func (s *Server) Stop() {
+func (s *Server) Stop(ctx context.Context) {
+	const op = "restful.Stop"
 
+	if err := s.srv.Shutdown(ctx); err != nil {
+		fmt.Errorf("%s: %s", op, err.Error())
+	}
+
+	s.log.Info("restful.Server stopped its work")
 }
 
 func postNew(c *gin.Context) {
@@ -86,20 +96,6 @@ func postNew(c *gin.Context) {
 		return
 	}
 
-	// be careful. Calc does not exist anymore
-	if calcAny, exists := c.Get("calc"); exists {
-		expr, err := calcAny.(*calculator.Calculator).ProcessExpression(&body)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error":   err.Error(),
-				"message": "could not process your expression",
-			})
-			return
-		}
-
-		c.JSON(http.StatusAccepted, &expr)
-		return
-	}
 	c.AbortWithStatus(http.StatusInternalServerError)
 }
 

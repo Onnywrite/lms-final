@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"os"
 	"os/signal"
@@ -20,7 +21,6 @@ func main() {
 	cfg := config.MustLoadMain()
 
 	log := setupLogger(cfg.Env)
-	defer log.Debug("stopped")
 	application := app.NewMain(log, cfg.Port, cfg.StaticDir)
 	log.Debug("Starting the application")
 	go application.MustStart()
@@ -28,9 +28,18 @@ func main() {
 	// graceful shutdown
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGTERM, syscall.SIGINT)
-	log.Debug("Waiting for shutdown")
+	log.Debug("Waiting for shutdown in main.go")
+
 	<-shutdown
-	application.Stop()
+	log.Info("Shutting down")
+
+	c, cancel := context.WithTimeout(context.Background(), cfg.ShutdownTimeout)
+	defer cancel()
+	application.Stop(c)
+	select {
+	case <-c.Done():
+		log.Error("Shutdown timeout exceeded")
+	}
 	log.Info("Gracefully stopped")
 }
 

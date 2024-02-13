@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 
@@ -43,7 +44,7 @@ func (a *MainApp) Start() error {
 	return nil
 }
 
-func (a *MainApp) Stop() {
-	a.server.Stop()
+func (a *MainApp) Stop(ctx context.Context) {
+	a.server.Stop(ctx)
 	a.log.Info("Server stopped")
 }
