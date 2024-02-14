@@ -43,7 +43,6 @@ func (s *Server) Start() error {
 
 	go func() {
 		if err := s.srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			// TODO: the same in every fmt.Errorf
 			s.log.Error("", slog.String("op", op), slog.String("err", err.Error()))
 		}
 	}()

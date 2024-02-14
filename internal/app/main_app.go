@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"fmt"
 	"log/slog"
 
 	"github.com/Onnywrite/lms-final/internal/services/restful"
@@ -37,7 +36,7 @@ func (a *MainApp) Start() error {
 	const op = "app.Start"
 
 	if err := a.server.Start(); err != nil {
-		fmt.Errorf("%s: %s", op, err.Error())
+		a.log.Error("", slog.String("op", op), slog.String("err", err.Error()))
 		return err
 	}
 	a.log.Info("Server started")

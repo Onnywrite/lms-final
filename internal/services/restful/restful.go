@@ -3,6 +3,7 @@ package restful
 import (
 	"context"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 
@@ -29,6 +30,9 @@ type Server struct {
 }
 
 func New(logger *slog.Logger, port int, staticPath string) *Server {
+	gin.SetMode(gin.ReleaseMode)
+	gin.DefaultWriter = io.Discard
+
 	mux := gin.Default()
 	binding.EnableDecoderDisallowUnknownFields = true
 
@@ -60,7 +64,7 @@ func (s *Server) Start() error {
 
 	go func() {
 		if err := s.srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			fmt.Errorf("%s: %s", op, err.Error())
+			s.log.Error("", slog.String("op", op), slog.String("err", err.Error()))
 		}
 	}()
 
@@ -72,7 +76,7 @@ func (s *Server) Stop(ctx context.Context) {
 	const op = "restful.Stop"
 
 	if err := s.srv.Shutdown(ctx); err != nil {
-		fmt.Errorf("%s: %s", op, err.Error())
+		s.log.Error("", slog.String("op", op), slog.String("err", err.Error()))
 	}
 
 	s.log.Info("restful.Server stopped its work")
