@@ -3,8 +3,6 @@
 }
 
 .send-button {
-    width: 20%;
-    height: 100%;
     font-size: medium;
 }
 
@@ -12,6 +10,7 @@
     display: flex;
     flex-direction: column;
     gap: 16px;
+    margin-bottom: 12px;
 }
 
 .operations-tip {
@@ -29,7 +28,66 @@
 }
 .expression-input {
     width: 280px;
-    border-radius: 8px;
+    border-radius: 6px;
+    margin-right: 150px;
     padding: 16px 32px;
     font-size: medium;
+}
+
+.panel-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 250px;
+    height: 48px;
+
+    background-color: #acacff;
+    color: #000;
+    border-left: 0.5px solid #9090ff;
+    border-right: 0.5px solid #9090ff;
+
+    text-decoration: none;
+
+    transition: .15s ease-in-out;
+}
+.panel-button:hover {
+    opacity: .9;
+    font-size: 115%;
+    background-color: #bdbdff;
+    border-left: 0.5px solid #acacff;
+    border-right: 0.5px solid #acacff;
+}
+.nav {
+    display: flex;
+    justify-content: center;
+
+    border: 100px
+}
+.header {
+    display: flex;
+    align-items: center;
+
+    height: 50px;
+
+    margin-bottom: 50px;
+
+    background-color:#aaaaff;
+}
+.panel-button {
+    padding: 16p 52px;
+}
+.logo {
+    margin-right: 100px;
+    text-decoration: none;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 96vh;
+}
+
+.int-main {
+    flex: 1 1 auto;
 }
