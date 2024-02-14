@@ -1,9 +1,31 @@
+:root {
+    --accent-color: #1a1a1a;
+    --interactive-bg-color: #3b3b3b;
+    --secondary-text-color: #ccc;
+    --text-color: #eee;
+    --elements-bg-color: #232340;
+    --elements-border-color: #1f1f2f;
+    --nav-buttons-border-hovering: #3d3d56;
+}
+
+html,body {
+    height: 100svh;
+    margin: 0;
+    padding: 0;
+}
+
 .text {
     font-family: Arial, Helvetica, sans-serif;
+    color: var(--text-color);
 }
 
 .send-button {
     font-size: medium;
+    color: var(--secondary-text-color);
+    background-color: var(--interactive-bg-color);
+    border: 1px solid #666;
+    width: 250px;
+    height: 30px;
 }
 
 .expression-settings {
@@ -32,6 +54,12 @@
     margin-right: 150px;
     padding: 16px 32px;
     font-size: medium;
+    background-color: var(--interactive-bg-color);
+    border: 0px solid #fff;
+}
+
+.expression-input::placeholder {
+    color: var(--secondary-text-color);
 }
 
 .panel-button {
@@ -42,10 +70,10 @@
     width: 250px;
     height: 48px;
 
-    background-color: #acacff;
+    background-color: var(--elements-bg-color);
     color: #000;
-    border-left: 0.5px solid #9090ff;
-    border-right: 0.5px solid #9090ff;
+    border-left: 1px solid var(--elements-border-color);
+    border-right: 1px solid var(--elements-border-color);
 
     text-decoration: none;
 
@@ -53,17 +81,21 @@
 }
 .panel-button:hover {
     opacity: .9;
-    font-size: 115%;
-    background-color: #bdbdff;
-    border-left: 0.5px solid #acacff;
-    border-right: 0.5px solid #acacff;
+    font-size: 110%;
+    border-left: 1px solid var(--nav-buttons-border-hovering);
+    border-right: 1px solid var(--nav-buttons-border-hovering);
 }
 .nav {
     display: flex;
     justify-content: center;
 
-    border: 100px
+    border: 100px;
 }
+.nav .text {
+    color: var(--text-color);
+    background-color: var(--elements-bg-color);
+}
+
 .header {
     display: flex;
     align-items: center;
@@ -72,22 +104,33 @@
 
     margin-bottom: 50px;
 
-    background-color:#aaaaff;
+    background-color:var(--elements-bg-color);
 }
 .panel-button {
     padding: 16p 52px;
 }
 .logo {
     margin-right: 100px;
+    margin-left: 2ch;
     text-decoration: none;
 }
 
 .wrapper {
     display: flex;
     flex-direction: column;
-    min-height: 96vh;
+    min-height: 100%;
+    background-color: var(--accent-color);
 }
 
 .int-main {
     flex: 1 1 auto;
+    margin-left: 2ch;
+}
+
+.footer {
+    background-color: var(--elements-bg-color);
+}
+
+.footer-text {
+    margin-left: 2ch;
 }
