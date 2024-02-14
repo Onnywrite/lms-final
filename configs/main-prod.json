@@ -1,0 +1,8 @@
+{
+  "env": "prod",
+  "port": 8080,
+  "static_dir": "./resources/static",
+  "orchestrator_uri": "localhost:8081",
+  "shutdown_timeout": 5,
+  "logs_dir": "logs/restful"
+}

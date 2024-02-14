@@ -1,44 +1,39 @@
 package app
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 
-	"github.com/Onnywrite/lms-final/internal/services/calculator"
 	"github.com/Onnywrite/lms-final/internal/services/restful"
 )
 
-type App struct {
+type MainApp struct {
 	log      *slog.Logger
 	server   *restful.Server
 	restPort int
 }
 
-func New(
+func NewMain(
 	logger *slog.Logger,
-	dbConnect string,
-	goroutinesCount int,
 	port int,
-	staticPath string) *App {
-	// TODO: database (storage)
-	//db := storage....
-	calc := calculator.New(logger, goroutinesCount /*, db*/)
-	serv := restful.New(logger, calc, port, staticPath)
+	staticPath string) *MainApp {
+	serv := restful.New(logger, port, staticPath)
 
-	return &App{
+	return &MainApp{
 		log:      logger,
 		server:   serv,
 		restPort: port,
 	}
 }
 
-func (a *App) MustStart() {
+func (a *MainApp) MustStart() {
 	if err := a.Start(); err != nil {
 		panic(err)
 	}
 }
 
-func (a *App) Start() error {
+func (a *MainApp) Start() error {
 	const op = "app.Start"
 
 	if err := a.server.Start(); err != nil {
@@ -49,7 +44,7 @@ func (a *App) Start() error {
 	return nil
 }
 
-func (a *App) Stop() {
-	a.server.Stop()
+func (a *MainApp) Stop(ctx context.Context) {
+	a.server.Stop(ctx)
 	a.log.Info("Server stopped")
 }

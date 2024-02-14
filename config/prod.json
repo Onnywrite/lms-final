@@ -1,7 +1,0 @@
-{
-  "env": "prod",
-  "goroutines_count": 32,
-  "port": 8080,
-  "static_dir": "./resources/static",
-  "db_connection": null
-}

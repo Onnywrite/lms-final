@@ -1,15 +1,13 @@
 package restful
 
 import (
+	"context"
 	"fmt"
-	"github.com/Onnywrite/lms-final/internal/domain/models"
-	"github.com/gin-gonic/gin/binding"
 	"log/slog"
 	"net/http"
-	"os"
 
-	"github.com/Onnywrite/lms-final/internal/services/calculator"
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
 )
 
 // Server has these endpoints:
@@ -26,53 +24,42 @@ import (
 //
 // ....
 type Server struct {
-	log  *slog.Logger
-	calc *calculator.Calculator
-	mux  *gin.Engine
-	port int
+	log *slog.Logger
+	srv *http.Server
 }
 
-func New(logger *slog.Logger, calculator *calculator.Calculator, port int, staticPath string) *Server {
+func New(logger *slog.Logger, port int, staticPath string) *Server {
 	mux := gin.Default()
 	binding.EnableDecoderDisallowUnknownFields = true
 
 	mux.Static("/static", staticPath)
-	mux.Use(func(c *gin.Context) {
-		c.Set("calc", calculator)
-	})
 	mux.LoadHTMLFiles("./resources/index.html")
 
 	mux.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
-	mux.POST("/new/", postNew)
-	mux.GET("/status/", getStatus)
-	// TODO: mux.HandleFunc("/powers/", handlePowers)
-	// DEBUG-ONLY
-	mux.GET("/ban/", func(c *gin.Context) {
-		c.Status(http.StatusOK)
-		os.Exit(0)
-	})
-	//
+	mux.GET("/status", getStatus)
+	mux.GET("/servers", getServers)
+	mux.POST("/new", postNew)
+
+	srv := &http.Server{
+		Addr:    fmt.Sprintf(":%d", port),
+		Handler: mux,
+	}
+
 	logger.Debug("New restful.Server is ready to handle")
 
 	return &Server{
-		log:  logger,
-		calc: calculator,
-		port: port,
-		mux:  mux,
+		log: logger,
+		srv: srv,
 	}
 }
 
 func (s *Server) Start() error {
 	const op = "restful.Start"
 
-	if err := s.calc.Start(); err != nil {
-		return err
-	}
-
 	go func() {
-		if err := s.mux.Run(fmt.Sprintf(":%d", s.port)); err != nil {
+		if err := s.srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			fmt.Errorf("%s: %s", op, err.Error())
 		}
 	}()
@@ -81,40 +68,12 @@ func (s *Server) Start() error {
 	return nil
 }
 
-func (s *Server) Stop() {
-	s.calc.Stop()
-}
+func (s *Server) Stop(ctx context.Context) {
+	const op = "restful.Stop"
 
-func postNew(c *gin.Context) {
-	body := models.Expression{}
-	if err := c.BindJSON(&body); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-			"error":   err.Error(),
-			"message": "could not parse JSON body request",
-		})
-		return
+	if err := s.srv.Shutdown(ctx); err != nil {
+		fmt.Errorf("%s: %s", op, err.Error())
 	}
 
-	if calcAny, exists := c.Get("calc"); exists {
-		expr, err := calcAny.(*calculator.Calculator).ProcessExpression(&body)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
-				"error":   err.Error(),
-				"message": "could not process your expression",
-			})
-			return
-		}
-
-		c.JSON(http.StatusAccepted, &expr)
-		return
-	}
-	c.AbortWithStatus(http.StatusInternalServerError)
-}
-
-func getStatus(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"id":     1567,
-		"status": "calculating",
-		"done":   "97.8%",
-	})
+	s.log.Info("restful.Server stopped its work")
 }

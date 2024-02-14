@@ -7,12 +7,12 @@ import (
 )
 
 func main() {
-	cfg := config.MustLoadMain()
+	cfg := config.MustLoadOrchestrator()
 
 	log := domain.MustSetupLoggerInDir(cfg.Env, cfg.LogsDir)
 
-	application := app.NewMain(log, cfg.Port, cfg.StaticDir)
-	log.Debug("Starting the application")
+	application := app.NewOrchestrator(log, cfg.Port, cfg.DbConnection)
+	log.Debug("Starting the orchestrator")
 	go application.MustStart()
 
 	// graceful shutdown
