@@ -1,5 +1,5 @@
-const newEP = "http://localhost:8080/new";
-const statusEP = "http://localhost:8080/status";
+const newEP = "http://localhost:8081/new";
+const statusEP = "http://localhost:8081/status";
 
 const indexHtml = `
 <input type="text" class="expression-input text" placeholder="Enter an expression">
