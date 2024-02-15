@@ -3,5 +3,5 @@
   "port": 8081,
   "db_connection": "",
   "shutdown_timeout": 5,
-  "logs_dir": ".logs/orchestrator"
+  "logs_dir": "logs/orchestrator"
 }
