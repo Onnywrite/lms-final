@@ -33,20 +33,20 @@ const indexHtml = `
 `;
 const expressionsHtml = `
 <div>
-    <p>No content</p>
-    <p>List of all expressions</p>
+    <p class="text">No content</p>
+    <p class="text">List of all expressions</p>
 </div>
 `;
 const serversHtml = `
 <div>
-    <p>No content</p>
-    <p>List of servers with their work status</p>
+    <p class="text">No content</p>
+    <p class="text">List of servers with their work status</p>
 </div>
 `;
-const contactsHtml = `
+const helpHtml = `
 <div>
-    <p>No content</p>
-    <p>contacts...</p>
+    <p class="text">No content</p>
+    <p class="text">some help...</p>
 </div>
 `;
 let html = document.querySelector(".int-main");
@@ -66,18 +66,19 @@ let loadServers = () => {
     openServersPage();
 };
 
-let loadContacts = () => {
-    html.innerHTML = contactsHtml;
-    openContactsPage();
+let loadHelp = () => {
+    html.innerHTML = helpHtml;
+    openHelpPage();
 };
 
 loadIndex();
 
-const calculatorPage = document.querySelector(".calculator-page");
-const expressionsPage = document.querySelector(".expressions-page");
+const [calculatorPage, expressionsPage, serversPage, helpPage] = document.querySelectorAll(".panel-button");
 
 calculatorPage.addEventListener("click", () => loadIndex());
-expressionsPage.addEventListener("click", () => loadExpression());
+expressionsPage.addEventListener("click", () => loadExpressions());
+serversPage.addEventListener("click", () => loadServers());
+helpPage.addEventListener("click", () => loadHelp());
 
 function openCalculatorPage() {
     const [expressionInput, additionTimeInput, subtractionTimeInput,
@@ -124,6 +125,6 @@ function openServersPage() {
 
 }
 
-function openContactsPage() {
+function openHelpPage() {
 
 }
