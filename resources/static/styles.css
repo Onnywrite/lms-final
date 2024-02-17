@@ -78,6 +78,8 @@ html,body {
     text-decoration: none;
 
     transition: .15s ease-in-out;
+
+    user-select: none;
 }
 .panel-button:hover {
     opacity: .9;
@@ -85,6 +87,7 @@ html,body {
     border-left: 1px solid var(--nav-buttons-border-hovering);
     border-right: 1px solid var(--nav-buttons-border-hovering);
 }
+
 .nav {
     display: flex;
     justify-content: center;
