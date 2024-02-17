@@ -38,7 +38,7 @@ const (
 )
 
 func validateSymbols(e string) error {
-	if !regexp.MustCompile(`^[0-9()*/+-]$`).MatchString(e) {
+	if !regexp.MustCompile(`^[0-9()*/+-]+$`).MatchString(e) {
 		return SymbolsErr
 	}
 	return nil
