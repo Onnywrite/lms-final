@@ -20,7 +20,7 @@ func (st *Stack[T]) TryPop(res *T) (can bool) {
 	}
 	newSize := len(st.data) - 1
 	st.data = st.data[:newSize]
-	return
+	return true
 }
 
 func (st *Stack[T]) Pop() (res T) {
