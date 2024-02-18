@@ -4,17 +4,24 @@ import (
 	"github.com/Onnywrite/lms-final/internal/app"
 	"github.com/Onnywrite/lms-final/internal/config"
 	"github.com/Onnywrite/lms-final/internal/domain"
+	"log/slog"
 )
 
 func main() {
+	const op = "main"
+
 	cfg := config.MustLoadOrchestrator()
 
-	log := domain.MustSetupLoggerInDir(cfg.Env, cfg.LogsDir)
+	logger := domain.MustSetupLoggerInDir(cfg.Env, cfg.LogsDir)
+	log := logger.With(slog.String("op", op))
 
-	application := app.NewOrchestrator(log, cfg.Port, cfg.DbConnection)
+	application := app.NewOrchestrator(logger, cfg.Port, cfg.DbConnection, cfg.AllowOrigin)
 	log.Debug("Starting the orchestrator")
-	go application.MustStart()
+	if err := application.Start(); err != nil {
+		log.Error("Could not start the orchestrator")
+		return
+	}
 
 	// graceful shutdown
-	domain.ShutdownOnSignal(cfg.ShutdownTimeout, log, application)
+	domain.ShutdownOnSignal(cfg.ShutdownTimeout, logger, application)
 }

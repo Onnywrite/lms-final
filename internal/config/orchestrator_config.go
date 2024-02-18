@@ -12,6 +12,7 @@ type OrchestratorConfig struct {
 	DbConnection    string        `json:"db_connection"`
 	ShutdownTimeout time.Duration `json:"shutdown_timeout"`
 	LogsDir         string        `json:"logs_dir"`
+	AllowOrigin     []string      `json:"allow_origin_header"`
 }
 
 func MustLoadOrchestrator() *OrchestratorConfig {

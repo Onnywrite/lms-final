@@ -10,7 +10,6 @@ type MainConfig struct {
 	Env             string        `json:"env"`
 	Port            int           `json:"port"`
 	StaticDir       string        `json:"static_dir"`
-	OrchestratorURI string        `json:"orchestrator_uri"`
 	ShutdownTimeout time.Duration `json:"shutdown_timeout"`
 	LogsDir         string        `json:"logs_dir"`
 }
