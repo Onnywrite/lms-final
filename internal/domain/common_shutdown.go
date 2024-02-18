@@ -11,10 +11,13 @@ import (
 )
 
 type Stoppable interface {
-	Stop(context.Context)
+	Stop(context.Context, chan<- error)
 }
 
-func ShutdownOnSignal(timeout time.Duration, log *slog.Logger, processes ...Stoppable) {
+func ShutdownOnSignal(timeout time.Duration, logger *slog.Logger, processes ...Stoppable) {
+	const op = "domain.ShutdownOnSignal"
+	log := logger.With(slog.String("op", op))
+
 	shutdown := make(chan os.Signal, 1)
 	signal.Notify(shutdown, syscall.SIGTERM, syscall.SIGINT)
 	log.Debug("Waiting for shutdown")
@@ -27,10 +30,15 @@ func ShutdownOnSignal(timeout time.Duration, log *slog.Logger, processes ...Stop
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
+			done := make(chan error)
 			ctx, cancel := context.WithTimeout(context.Background(), timeout)
 			defer cancel()
-			p.Stop(ctx)
+			p.Stop(ctx, done)
 			select {
+			case err := <-done:
+				if err != nil {
+					log.Error("Shutdown exited with error", slog.String("err", err.Error()))
+				}
 			case <-ctx.Done():
 				log.Error("Shutdown timeout exceeded")
 			}
