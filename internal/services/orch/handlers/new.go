@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"errors"
+	"net/http"
+	"time"
+
 	"github.com/Onnywrite/lms-final/internal/domain/models"
 	"github.com/Onnywrite/lms-final/internal/services/orch/rpn"
 	"github.com/gin-gonic/gin"
-	"net/http"
 )
 
 var (
@@ -33,6 +35,7 @@ func PostNew(saver ExpressionSaver) func(*gin.Context) {
 				Error: err.Error(),
 				Msg:   "invalid request fields. Timings must be greater than zero",
 			})
+			return
 		}
 
 		// Temporary
@@ -42,8 +45,9 @@ func PostNew(saver ExpressionSaver) func(*gin.Context) {
 				Error: err.Error(),
 				Msg:   "",
 			})
+			return
 		}
-
+		time.Sleep(time.Second * 10)
 		// Temporary
 		c.JSON(http.StatusOK, gin.H{
 			"rpn_expression": rpnExpr,
