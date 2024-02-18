@@ -4,17 +4,26 @@ import (
 	"github.com/Onnywrite/lms-final/internal/app"
 	"github.com/Onnywrite/lms-final/internal/config"
 	"github.com/Onnywrite/lms-final/internal/domain"
+	"log/slog"
 )
 
 func main() {
+	const op = "main"
+
 	cfg := config.MustLoadMain()
 
-	log := domain.MustSetupLoggerInDir(cfg.Env, cfg.LogsDir)
+	logger := domain.MustSetupLoggerInDir(cfg.Env, cfg.LogsDir)
 
-	application := app.NewMain(log, cfg.Port, cfg.StaticDir)
+	log := logger.With(slog.String("op", op))
+
+	application := app.NewMain(logger, cfg.Port, cfg.StaticDir)
 	log.Debug("Starting the application")
-	go application.MustStart()
+
+	if err := application.Start(); err != nil {
+		log.Error("Could not start the application")
+		return
+	}
 
 	// graceful shutdown
-	domain.ShutdownOnSignal(cfg.ShutdownTimeout, log, application)
+	domain.ShutdownOnSignal(cfg.ShutdownTimeout, logger, application)
 }

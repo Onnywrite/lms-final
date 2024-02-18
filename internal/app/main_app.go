@@ -17,8 +17,12 @@ func NewMain(
 	logger *slog.Logger,
 	port int,
 	staticPath string) *MainApp {
+	const op = "app.NewMain"
+	log := logger.With(slog.String("op", op))
+
 	serv := restful.New(logger, port, staticPath)
 
+	log.Debug("MainApp was created")
 	return &MainApp{
 		log:      logger,
 		server:   serv,
@@ -33,17 +37,21 @@ func (a *MainApp) MustStart() {
 }
 
 func (a *MainApp) Start() error {
-	const op = "app.Start"
+	const op = "MainApp.Start"
+	log := a.log.With(slog.String("op", op))
 
 	if err := a.server.Start(); err != nil {
-		a.log.Error("", slog.String("op", op), slog.String("err", err.Error()))
+		log.Error("", slog.String("err", err.Error()))
 		return err
 	}
-	a.log.Info("Server started")
+	log.Info("MainApp started")
 	return nil
 }
 
-func (a *MainApp) Stop(ctx context.Context) {
-	a.server.Stop(ctx)
-	a.log.Info("Server stopped")
+func (a *MainApp) Stop(ctx context.Context, done chan<- error) {
+	const op = "MainApp.Stop"
+	log := a.log.With(slog.String("op", op))
+
+	a.server.Stop(ctx, done)
+	log.Info("MainApp stopped")
 }
