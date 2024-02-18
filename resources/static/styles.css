@@ -1,17 +1,23 @@
 :root {
     --accent-color: #1a1a1a;
     --interactive-bg-color: #3b3b3b;
+    --interactive-hover-color: #444;
     --secondary-text-color: #ccc;
     --text-color: #eee;
     --elements-bg-color: #232340;
     --elements-border-color: #1f1f2f;
     --nav-buttons-border-hovering: #3d3d56;
+    --block-color: #242424;
 }
 
 html,body {
     height: 100svh;
     margin: 0;
     padding: 0;
+}
+
+ul {
+    list-style-type: none;
 }
 
 .text {
@@ -26,13 +32,29 @@ html,body {
     border: 1px solid #666;
     width: 250px;
     height: 30px;
+
+    transition: .15s ease-in-out;
+}
+
+.send-button:hover {
+    background-color: var(--interactive-hover-color);
 }
 
 .expression-settings {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    margin-bottom: 12px;
+}
+
+.block {
+    background-color: var(--block-color);
+    border-radius: 6px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    margin-bottom: 15px;
+}
+.block div, .block button, .block input {
+    margin-left: 20px;
 }
 
 .operations-tip {
@@ -55,11 +77,16 @@ html,body {
     padding: 16px 32px;
     font-size: medium;
     background-color: var(--interactive-bg-color);
-    border: 0px solid #fff;
+    border: 0px;
 }
 
 .expression-input::placeholder {
     color: var(--secondary-text-color);
+}
+
+.expression-input::-webkit-inner-spin-button, .expression-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .panel-button {

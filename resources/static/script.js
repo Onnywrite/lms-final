@@ -1,9 +1,11 @@
-const newEP = "http://localhost:8081/new";
+const newEP    = "http://localhost:8081/new";
 const statusEP = "http://localhost:8081/status";
 
 const indexHtml = `
-<input type="text" class="expression-input text" placeholder="Enter an expression">
-<div class="expression-settings">
+<div class="block">
+    <input type="text" class="expression-input text" placeholder="Enter an expression">
+</div>
+<div class="expression-settings block">
     <div>
         <h3 class="operations-tip text">Operations timings</h3>
     </div>
@@ -23,8 +25,8 @@ const indexHtml = `
         <p class="operation text">Division</p>
         <input type="number" class="expression-input text" placeholder="Enter a number">
     </div>
+    <button class="send-button">Send</button>
 </div>
-<button class="send-button">Send</button>
 <div>
     <ul class="list">
 
@@ -86,9 +88,9 @@ function openCalculatorPage() {
     const send = document.querySelector(".send-button");
     const list = document.querySelector(".list");
     
-    let getItemHTML = (id, item) => `
-    <li>
-        ${id} - ${item}
+    let getItemHTML = (item) => `
+    <li class="text">
+        ${item}
     </li>`;
 
     send.addEventListener("click", async () => {
@@ -107,9 +109,9 @@ function openCalculatorPage() {
             }
         });
         if (resp.ok) {
-            resp = await resp.text();
-            alert(`New expression added with id ${resp}`);
-            list.innerHTML += getItemHTML(0, expr);
+            resp = await resp.json();
+            alert(`New expression added ${resp.rpn_expression}`);
+            list.innerHTML += getItemHTML(resp.rpn_expression);
         } else {
             alert(`Expression could not be added. Status: ${resp.status}`);
         }
