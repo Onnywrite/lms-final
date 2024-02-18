@@ -5,13 +5,15 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"unicode"
 
 	"github.com/Onnywrite/lms-final/internal/domain/structs"
 )
 
 var (
-	SymbolsErr = errors.New("expression contains restricted characters")
-	ParsingErr = errors.New("error while parsing your expression")
+	SymbolsErr     = errors.New("expression contains restricted characters")
+	NoOperationErr = errors.New("expression must contains at least one operation")
+	ParsingErr     = errors.New("error while parsing your expression")
 )
 
 func FromInfix(infixExpression string) (string, error) {
@@ -37,9 +39,17 @@ const (
 	add = '+'
 )
 
+var (
+	validSymbols = regexp.MustCompile(`^[ .0-9()*^/+-]+$`)
+	operations   = regexp.MustCompile(`^[*^/+-]+$`)
+)
+
 func validateSymbols(e string) error {
-	if !regexp.MustCompile(`^[0-9()*/+-]+$`).MatchString(e) {
+	if !validSymbols.MatchString(e) {
 		return SymbolsErr
+	}
+	if !operations.MatchString(e) {
+		return NoOperationErr
 	}
 	return nil
 }
@@ -75,18 +85,20 @@ func parseRPN(infix string) (string, error) {
 	pushIfNotLess := func(op rune) {
 		var top rune
 		if s.TryTop(&top) {
-			for ; priority(top) >= priority(op); s.TryTop(&top) {
-				buf = append(buf, s.Pop(), ' ')
+			for s.TryTop(&top) && priority(top) >= priority(op) {
+				buf = append(buf, ' ', s.Pop())
 			}
 		}
 		s.Push(op)
 	}
 
-	for _, r := range infix {
+	infixRunes := []rune(infix)
+	for i := 0; i < len(infixRunes); i++ {
+		r := infixRunes[i]
 		switch r {
 		case ')':
 			for top := s.Pop(); top != '('; top = s.Pop() {
-				buf = append(buf, top, ' ')
+				buf = append(buf, ' ', top)
 			}
 		case pow:
 			pushIfNotLess(r)
@@ -101,7 +113,9 @@ func parseRPN(infix string) (string, error) {
 		case '(':
 			s.Push(r)
 		default:
-			buf = append(buf, r)
+			buf = append(buf, ' ')
+			buf = append(buf, fetchNumber(infixRunes, &i)...)
+			buf = append(buf, ' ')
 		}
 	}
 
@@ -110,10 +124,10 @@ func parseRPN(infix string) (string, error) {
 		if op == '(' {
 			return "", ParsingErr
 		}
-		buf = append(buf, op)
+		buf = append(buf, ' ', op)
 	}
 
-	return string(buf), nil
+	return strings.ReplaceAll(strings.TrimSpace(string(buf)), "  ", " "), nil
 }
 
 func priority(op rune) int {
@@ -131,4 +145,19 @@ func priority(op rune) int {
 	default:
 		return -1
 	}
+}
+
+func fetchNumber(runes []rune, i *int) []rune {
+	buf := make([]rune, 0, 32)
+
+	for ; *i < len(runes); *i++ {
+		if unicode.IsDigit(runes[*i]) || runes[*i] == '.' {
+			buf = append(buf, runes[*i])
+		} else {
+			break
+		}
+	}
+	*i--
+
+	return buf
 }
