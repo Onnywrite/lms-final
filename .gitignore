@@ -1,6 +1,6 @@
 .idea
 configs/*-local.*
 storage
-Makefile
 **/ignore-*
 logs
+bin
