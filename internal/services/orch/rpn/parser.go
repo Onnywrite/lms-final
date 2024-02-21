@@ -41,7 +41,7 @@ const (
 
 var (
 	validSymbols = regexp.MustCompile(`^[ .0-9()*^/+-]+$`)
-	operations   = regexp.MustCompile(`^[*^/+-]+$`)
+	operations   = regexp.MustCompile(`[*^/+-]+`)
 )
 
 func validateSymbols(e string) error {
