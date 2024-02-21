@@ -2,12 +2,10 @@ package handlers
 
 import (
 	"errors"
-	"net/http"
-	"time"
-
 	"github.com/Onnywrite/lms-final/internal/domain/models"
 	"github.com/Onnywrite/lms-final/internal/services/orch/rpn"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 var (
@@ -15,7 +13,7 @@ var (
 )
 
 type ExpressionSaver interface {
-	Save( /**models.ParsedExpression*/ ) (models.ProcessedExpression, error)
+	Save(expression *models.StoredExpression) (models.ProcessedExpression, error)
 }
 
 func PostNew(saver ExpressionSaver) func(*gin.Context) {
@@ -38,7 +36,6 @@ func PostNew(saver ExpressionSaver) func(*gin.Context) {
 			return
 		}
 
-		// Temporary
 		var rpnExpr string
 		if rpnExpr, err = rpn.FromInfix(expr.Expression); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, &models.JsonErr{
@@ -47,7 +44,7 @@ func PostNew(saver ExpressionSaver) func(*gin.Context) {
 			})
 			return
 		}
-		time.Sleep(time.Second * 10)
+
 		// Temporary
 		c.JSON(http.StatusOK, gin.H{
 			"rpn_expression": rpnExpr,
