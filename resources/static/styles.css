@@ -164,3 +164,7 @@ ul {
 .footer-text {
     margin-left: 2ch;
 }
+
+button {
+    cursor: pointer;
+}
